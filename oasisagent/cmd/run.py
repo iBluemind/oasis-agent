@@ -26,31 +26,43 @@ if os.path.exists(os.path.join(possible_topdir,
                                '__init__.py')):
     sys.path.insert(0, possible_topdir)
 
-import eventlet
-eventlet.monkey_patch()
-
-
 from oslo_config import cfg
 from oslo_log import log as logging
+from oslo_reports import guru_meditation_report as gmr
 from oslo_service import service
 
-from oasisagent import app
-from oasisagent.common import config
+from oasisagent.common import service as oasis_service, rpc_service
+from oasisagent.common import short_id
+from oasisagent.handlers import endpoint
+from oasisagent.handlers import function
 
-CONF = cfg.CONF
+from oasisagent.i18n import _LI
+from oasisagent import version
+
+LOG = logging.getLogger(__name__)
 
 
 def main():
-    try:
-        config.parse_args()
-        logging.setup(CONF, 'oasisagent')
-        launcher = service.ServiceLauncher(CONF)
-        launcher.launch_service(app.OasisAgent())
-        launcher.wait()
-    except RuntimeError as e:
-        sys.stderr.write("ERROR: %s\n" % e)
-        sys.exit(1)
+    oasis_service.prepare_service(sys.argv)
 
+    gmr.TextGuruMeditation.setup_autorun(version)
+
+    LOG.info(_LI('Starting server in PID %s'), os.getpid())
+    LOG.debug("Configuration:")
+    cfg.CONF.log_opt_values(LOG, logging.DEBUG)
+
+    cfg.CONF.import_opt('topic', 'oasisagent.agent.config', group='agent')
+
+    agent_id = short_id.generate_id()
+    endpoints = [
+        function.Handler(),
+        endpoint.Handler()
+    ]
+    server = rpc_service.Service.create(cfg.CONF.agent.topic,
+                                        agent_id, endpoints,
+                                        binary='oasis-agent')
+    launcher = service.launch(cfg.CONF, server)
+    launcher.wait()
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,7 @@
-# Copyright 2011 OpenStack LLC.
+# Copyright 2010 United States Government as represented by the
+# Administrator of the National Aeronautics and Space Administration.
 # All Rights Reserved.
+# Copyright 2012 Red Hat, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -13,75 +15,48 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""
-Routines for configuring Murano-Agent
-"""
-
 from oslo_config import cfg
-from oslo_log import log as logging
+from oslo_middleware import cors
 
-from muranoagent import version
-
-CONF = cfg.CONF
-
-storage_opt = [
-    cfg.StrOpt('storage',
-               default='/var/murano/plans',
-               help='Directory to store execution plans')
-]
-
-message_routing_opt = [
-    cfg.BoolOpt('enable_dynamic_result_queue', help='Enable taking dynamic '
-                'result queue from task field reply_to',
-                default=False)
-]
-
-rabbit_opts = [
-    cfg.StrOpt('host',
-               help='The RabbitMQ broker address which used for communication '
-               'with Murano guest agents.',
-               default='localhost'),
-    cfg.IntOpt('port', help='The RabbitMQ broker port.', default=5672),
-    cfg.StrOpt('login',
-               help='The RabbitMQ login.',
-               default='guest'),
-    cfg.StrOpt('password',
-               help='The RabbitMQ password.',
-               default='guest'),
-    cfg.StrOpt('virtual_host',
-               help='The RabbitMQ virtual host.',
-               default='/'),
-    cfg.BoolOpt('ssl',
-                help='Boolean flag to enable SSL communication through the '
-                'RabbitMQ broker between murano-engine and guest agents.',
-                default=False),
-    cfg.StrOpt('ca_certs',
-               help='SSL cert file (valid only if SSL enabled).',
-               default=''),
-    cfg.BoolOpt('insecure', default=False,
-                help='This option explicitly allows Murano to perform '
-                     '"insecure" SSL connections to RabbitMQ'),
-    cfg.StrOpt('result_routing_key',
-               help='This value should be obtained from API'),
-    cfg.StrOpt('result_exchange',
-               help='This value must be obtained from API',
-               default=''),
-    cfg.StrOpt('input_queue',
-               help='This value must be obtained from API',
-               default='')
-
-]
-
-CONF.register_cli_opts(storage_opt)
-CONF.register_cli_opts(message_routing_opt)
-CONF.register_opts(rabbit_opts, group='rabbitmq')
-logging.register_options(CONF)
+from oasisagent.common import rpc
+from oasisagent import version
 
 
-def parse_args(args=None, usage=None, default_config_files=None):
-    version_string = version.version_info.version_string()
-    CONF(args=args,
-         project='muranoagent',
-         version=version_string,
-         usage=usage,
-         default_config_files=default_config_files)
+def parse_args(argv, default_config_files=None):
+    rpc.set_defaults(control_exchange='oasis')
+    cfg.CONF(argv[1:],
+             project='oasis',
+             version=version.version_info.release_string(),
+             default_config_files=default_config_files)
+    rpc.init(cfg.CONF)
+
+
+def set_config_defaults():
+    """This method updates all configuration default values."""
+    set_cors_middleware_defaults()
+
+
+def set_cors_middleware_defaults():
+    """Update default configuration options for oslo.middleware."""
+    # CORS Defaults
+    # TODO(krotscheck): Update with https://review.openstack.org/#/c/285368/
+    cfg.set_defaults(cors.CORS_OPTS,
+                     allow_headers=['X-Auth-Token',
+                                    'X-Identity-Status',
+                                    'X-Roles',
+                                    'X-Service-Catalog',
+                                    'X-User-Id',
+                                    'X-Tenant-Id',
+                                    'X-OpenStack-Request-ID',
+                                    'X-Server-Management-Url'],
+                     expose_headers=['X-Auth-Token',
+                                     'X-Subject-Token',
+                                     'X-Service-Token',
+                                     'X-OpenStack-Request-ID',
+                                     'X-Server-Management-Url'],
+                     allow_methods=['GET',
+                                    'PUT',
+                                    'POST',
+                                    'DELETE',
+                                    'PATCH']
+                     )
