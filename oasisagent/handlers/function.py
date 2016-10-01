@@ -6,7 +6,7 @@ class Handler(object):
     def __init__(self):
         self.builder = script_builder.ScriptFileBuilder()
 
-    def create(self, func_id, body, rule=None):
+    def function_create(self, context, func_id, body, rule=None):
         if rule:
             self.builder.set_route(rule)
         else:
@@ -16,15 +16,15 @@ class Handler(object):
         self.builder.set_function(func_id, body)
         self.builder.save()
 
-    def update(self, func_id, body):
+    def function_update(self, context, func_id, body):
         pass
         # self.builder.read(func_id)
         # self.builder.set_function(func_id, body)
 
-    def get(self):
+    def get(self, context):
         pass
 
-    def delete(self):
+    def delete(self, context):
         pass
 
 

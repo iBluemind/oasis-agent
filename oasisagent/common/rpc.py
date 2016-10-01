@@ -116,7 +116,7 @@ class RequestContextSerializer(messaging.Serializer):
         return context.to_dict()
 
     def deserialize_context(self, context):
-        return magnum_context.RequestContext.from_dict(context)
+        return oasis_context.RequestContext.from_dict(context)
 
 
 def get_transport_url(url_str=None):

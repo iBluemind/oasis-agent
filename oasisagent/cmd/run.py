@@ -56,7 +56,7 @@ def main():
     agent_id = short_id.generate_id()
     endpoints = [
         function.Handler(),
-        endpoint.Handler()
+        endpoint.Handler(),
     ]
     server = rpc_service.Service.create(cfg.CONF.agent.topic,
                                         agent_id, endpoints,

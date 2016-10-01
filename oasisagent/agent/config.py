@@ -25,6 +25,9 @@ AGENT_SERVICE_OPTS = [
                default=4,
                help=('RPC timeout for the conductor liveness check that is '
                      'used for bay locking.')),
+    cfg.StrOpt('function_location',
+               help='Function file location',
+               default='/etc/oasis/functions/')
 ]
 
 opt_group = cfg.OptGroup(

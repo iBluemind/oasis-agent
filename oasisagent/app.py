@@ -27,18 +27,6 @@ from oasisagent.executors import executor
 # from oasisagent.common import messaging
 
 
-CONF = config.CONF
-
-LOG = logging.getLogger(__name__)
-
-API_SERVICE_OPTS = [
-    #oasis
-    cfg.StrOpt('func_location',
-               help='Function file location',
-               default='/etc/oasis/functions/')
-
-]
-
 def run():
     # FunctionExecutor.create(111, "def testFunc(self): pass")
     endpointExecutor = executor.EndpointExecutor()
