@@ -41,7 +41,9 @@ class ScriptFile:
                           "app = Flask(__name__)\n"
         self.route = ''
         self.function = ''
-        self.app_run = "app.run(host='0.0.0.0')"
+        self.host = '0.0.0.0'
+        self.port = '8888'
+        self.app_run = "app.run(host='%s', port='%s')" % (self.host, self.port)
 
     def make(self, route, function):
         self.route = route
