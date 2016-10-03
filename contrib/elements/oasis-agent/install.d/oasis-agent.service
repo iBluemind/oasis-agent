@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenStack Oasis Agent
+
+[Service]
+Type=simple
+ExecStart=/opt/stack/venvs/oasis-agent/bin/oasisagent --config-dir /etc/oasis
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

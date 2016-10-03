@@ -8,23 +8,25 @@ class ScriptFileBuilder:
     def __init__(self):
         self.script_file = ScriptFile()
         self.function_id = ''
-        self.script = ''
+        self.route = ''
+        self.function_body = ''
 
     def set_route(self, rule):
-        self.script += "app.route('%s')\n" % rule
+        self.route += "@app.route('%s')" % rule
 
     def set_function(self, func_id, body):
         self.function_id = func_id
-        self.script += body
+        self.function_body = body
 
     def save(self):
-        file_location = "%s/%s" % (cfg.CONF.agent.function_location, self.function_id)
+        self.script_file.make(self.route, self.function_body)
+        file_location = "%s/%s.py" % (cfg.CONF.agent.function_location, self.function_id)
         f = open(file_location, 'w')
         f.write(str(self.script_file))
         f.close()
 
     def read(self, function_id):
-        file_location = "%s/%s" % (cfg.CONF.agent.function_location, function_id)
+        file_location = "%s/%s.py" % (cfg.CONF.agent.function_location, function_id)
         f = open(file_location, 'r')
         data = ''
         f.read(data)
@@ -39,6 +41,7 @@ class ScriptFile:
                           "app = Flask(__name__)\n"
         self.route = ''
         self.function = ''
+        self.app_run = "app.run(host='0.0.0.0')"
 
     def make(self, route, function):
         self.route = route
@@ -51,7 +54,7 @@ class ScriptFile:
         self.function = tokens[1]
 
     def __str__(self):
-        return "%s\n%s\n%s\n" % (self.prototype, self.route, self.function)
+        return "%s\n%s\n%s\n\n%s\n" % (self.prototype, self.route, self.function, self.app_run)
 
 
 
