@@ -33,6 +33,9 @@ popd
 
 cp ${svc_root}/etc/oasisagent/oasisagent.conf.sample /etc/oasis/agent.conf.sample
 
+# mkdir function directory
+mkdir -p /etc/oasis/functions
+
 # install upstart script for oasis-agent
 if [ -d "/etc/init/" ]; then
     install -D -g root -o root -m 0755 $(dirname $0)/oasis-agent.conf /etc/init/

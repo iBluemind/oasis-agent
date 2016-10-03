@@ -6,30 +6,34 @@ import uuid
 class Handler(object):
     def __init__(self):
         self.process = ''
+        self.erro = ''
         self.builder = script_builder.ScriptFileBuilder()
 
-    def function_create(self, context, function_id, body, rule):
-        if rule:
-            self.builder.set_route(rule)
-        else:
-            rand = uuid.uuid4()
-            self.builder.set_route(rand)
-
+    @staticmethod
+    def run_service(self, function_id, body, rule):
+        self.builder.set_route(rule)
         self.builder.set_function(function_id, body)
         self.builder.save()
 
-        self.process, erro = flask_task.run_flask(function_id)
+        self.process, self.erro = flask_task.run_flask(function_id)
 
-        if erro == '':
+    def function_create(self, context, function_id, body, rule):
+        self.run_service(function_id, body, rule)
+
+        if self.erro == '':
             return "OK"
 
-    def function_update(self, context, function_id, body):
-        pass
-        # self.builder.read(func_id)
-        # self.builder.set_function(func_id, body)
+    def function_update(self, context, function_id, body, rule):
+        self.process.kill()
+
+        self.run_service(function_id, body, rule)
+
+        if self.erro == '':
+            return "OK"
 
     def function_delete(self, context, function_id):
         self.process.kill()
+
 
 
 
