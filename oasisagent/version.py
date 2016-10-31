@@ -13,4 +13,5 @@
 
 import pbr.version
 
-version_info = pbr.version.VersionInfo('magnum')
+version_info = pbr.version.VersionInfo('oasis-agent')
+version_string = version_info.version_string

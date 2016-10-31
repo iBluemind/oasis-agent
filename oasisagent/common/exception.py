@@ -23,7 +23,6 @@ import json
 import sys
 import uuid
 
-from keystoneclient import exceptions as keystone_exceptions
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import excutils
@@ -158,22 +157,6 @@ def wrap_pecan_controller_exception(func):
                                      _func_server_error,
                                      _func_client_error)
 
-
-def wrap_keystone_exception(func):
-    """Wrap keystone exceptions and throw Magnum specific exceptions."""
-    @functools.wraps(func)
-    def wrapped(*args, **kw):
-        try:
-            return func(*args, **kw)
-        except keystone_exceptions.AuthorizationFailure:
-            raise AuthorizationFailure(
-                client=func.__name__, message="reason: %s" % sys.exc_info()[1])
-        except keystone_exceptions.ClientException:
-            raise AuthorizationFailure(
-                client=func.__name__,
-                message="unexpected keystone client error occurred: %s"
-                        % sys.exc_info()[1])
-    return wrapped
 
 
 class MagnumException(Exception):

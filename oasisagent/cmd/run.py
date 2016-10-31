@@ -33,7 +33,6 @@ from oslo_service import service
 
 from oasisagent.common import service as oasis_service, rpc_service
 from oasisagent.common import short_id
-from oasisagent.handlers import endpoint
 from oasisagent.handlers import function
 
 from oasisagent.i18n import _LI
@@ -56,7 +55,6 @@ def main():
     agent_id = short_id.generate_id()
     endpoints = [
         function.Handler(),
-        endpoint.Handler(),
     ]
     server = rpc_service.Service.create(cfg.CONF.agent.topic,
                                         agent_id, endpoints,

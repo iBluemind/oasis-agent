@@ -40,18 +40,18 @@ TRANSPORT_ALIASES = {
     'magnum.openstack.common.rpc.impl_zmq': 'zmq',
 }
 
-periodic_opts = [
-    cfg.BoolOpt('periodic_enable',
-                default=True,
-                help='Enable periodic tasks.'),
-    cfg.IntOpt('periodic_interval_max',
-               default=60,
-               help='Max interval size between periodic tasks execution in '
-                    'seconds.'),
-]
+# periodic_opts = [
+#     cfg.BoolOpt('periodic_enable',
+#                 default=True,
+#                 help='Enable periodic tasks.'),
+#     cfg.IntOpt('periodic_interval_max',
+#                default=60,
+#                help='Max interval size between periodic tasks execution in '
+#                     'seconds.'),
+# ]
 
-CONF = cfg.CONF
-CONF.register_opts(periodic_opts)
+# CONF = cfg.CONF
+# CONF.register_opts(periodic_opts)
 
 
 class Service(service.Service):
