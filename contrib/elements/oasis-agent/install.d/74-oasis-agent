@@ -20,7 +20,6 @@ if [ -n "$ref" ]; then
     popd
 fi
 
-# /ops/stack/venvs/oasis-agent
 pip install $svc_root
 
 PATH="/usr/local/bin:/usr/bin:$PATH"

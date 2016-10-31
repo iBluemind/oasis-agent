@@ -17,6 +17,11 @@
 # THIS FILE IS MANAGED BY THE GLOBAL REQUIREMENTS REPO - DO NOT EDIT
 import setuptools
 
+try:
+    import multiprocessing  # noqa
+except ImportError:
+    pass
+
 setuptools.setup(
-    setup_requires=['pbr'],
+    setup_requires=['pbr>=1.8'],
     pbr=True)
