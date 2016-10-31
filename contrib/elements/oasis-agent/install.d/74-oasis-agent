@@ -2,12 +2,12 @@
 
 set -eu
 
-install-packages git-core wget make gcc python-pip python-dev python-setuptools python-virtualenv chef puppet
+install-packages git-core wget make gcc python-pip python-dev python-setuptools
 
 name=oasis-agent
 svc_root=${DIB_OASIS_AGENT_SVC_ROOT:-/opt/stack/$name}
 install_dir=${DIB_OASIS_AGENT_INSTALL_DIR:-/opt/stack/$name}
-repo=${DIB_OASIS_AGENT_REPO:-https://github.com/samgoon/oasis-agent.git}
+repo=${DIB_OASIS_AGENT_REPO:-git://github.com/samgoon/oasis-agent.git}
 branch=${DIB_OASIS_AGENT_BRANCH:-master}
 ref=${DIB_OASIS_AGENT_REF:-''}
 
@@ -20,21 +20,17 @@ if [ -n "$ref" ]; then
     popd
 fi
 
-# install oasis-agent into virtualenv at /ops/stack/venvs/oasis-agent
-virtualenv $install_dir
-$install_dir/bin/pip install $svc_root
+# /ops/stack/venvs/oasis-agent
+pip install $svc_root
 
-# setup config file at /etc/oasis/agent.conf
-mkdir -p /etc/oasis
+PATH="/usr/local/bin:/usr/bin:$PATH"
 
 pushd ${svc_root}
-${install_dir}/bin/oslo-config-generator --config-file ${svc_root}/etc/oslo-config-generator/oasisagent.conf
+oslo-config-generator --config-file ${svc_root}/etc/oslo-config-generator/oasisagent.conf
 popd
 
-cp ${svc_root}/etc/oasisagent/oasisagent.conf.sample /etc/oasis/agent.conf.sample
-
-# mkdir function directory
-mkdir -p /etc/oasis/functions
+mkdir -p /etc/oasis-agent/
+cp ${svc_root}/etc/oasisagent/oasisagent.conf.sample /etc/oasis-agent/oasis-agent.conf
 
 # install upstart script for oasis-agent
 if [ -d "/etc/init/" ]; then
@@ -43,4 +39,74 @@ fi
 if [ -d "/etc/systemd/system/" ]; then
     install -D -g root -o root -m 0755 $(dirname $0)/oasis-agent.service /etc/systemd/system/
 fi
+#
+#function ini_has_option {
+#    local xtrace
+#    xtrace=$(set +o | grep xtrace)
+#    set +o xtrace
+#    local file=$1
+#    local section=$2
+#    local option=$3
+#    local line
+#
+#    line=$(sed -ne "/^\[$section\]/,/^\[.*\]/ { /^$option[ \t]*=/ p; }" "$file")
+#    $xtrace
+#    [ -n "$line" ]
+#}
+#
+#function iniset {
+#    local xtrace
+#    xtrace=$(set +o | grep xtrace)
+#    set +o xtrace
+#    local sudo=""
+#    if [ $1 == "-sudo" ]; then
+#        sudo="sudo "
+#        shift
+#    fi
+#    local file=$1
+#    local section=$2
+#    local option=$3
+#    local value=$4
+#
+#    if [[ -z $section || -z $option ]]; then
+#        $xtrace
+#        return
+#    fi
+#
+#    if ! grep -q "^\[$section\]" "$file" 2>/dev/null; then
+#        # Add section at the end
+#        echo -e "\n[$section]" | $sudo tee --append "$file" > /dev/null
+#    fi
+#    if ! ini_has_option "$file" "$section" "$option"; then
+#        # Add it
+#        $sudo sed -i -e "/^\[$section\]/ a\\
+#$option = $value
+#" "$file"
+#    else
+#        local sep
+#        sep=$(echo -ne "\x01")
+#        # Replace it
+#        $sudo sed -i -e '/^\['${section}'\]/,/^\[.*\]/ s'${sep}'^\('${option}'[ \t]*=[ \t]*\).*$'${sep}'\1'"${value}"${sep} "$file"
+#    fi
+#    $xtrace
+#}
+#
+#
+## create_oasis_agent_conf
+#OASIS_AGENT_CONF_DIR=/etc/oasis-agent
+#OASIS_AGENT_CONF=$OASIS_AGENT_CONF_DIR/oasis-agent.conf
+#
+#STACK_USER=`hostname -i`
+#sudo mkdir -p $OASIS_AGENT_CONF_DIR
+#sudo chown $STACK_USER $OASIS_AGENT_CONF_DIR
+#
+#RABBIT_USERID=stackrabbit
+#RABBIT_PASSWORD=1234
+#RABBIT_HOST=`ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+#
+#iniset $OASIS_AGENT_CONF oslo_messaging_rabbit rabbit_userid $RABBIT_USERID
+#iniset $OASIS_AGENT_CONF oslo_messaging_rabbit rabbit_password $RABBIT_PASSWORD
+#iniset $OASIS_AGENT_CONF oslo_messaging_rabbit rabbit_host $RABBIT_HOST
 
+# mkdir function directory
+mkdir -p /etc/oasis-agent/functions
