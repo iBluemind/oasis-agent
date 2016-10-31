@@ -42,7 +42,8 @@ LOG = logging.getLogger(__name__)
 
 
 def main():
-    oasis_service.prepare_service(sys.argv)
+    temp = ["/etc/oasis-agent/oasis-agent.conf", ]
+    oasis_service.prepare_service(temp)
 
     gmr.TextGuruMeditation.setup_autorun(version)
 
