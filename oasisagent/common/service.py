@@ -39,6 +39,6 @@ def prepare_service(argv=None):
         argv = []
     logging.register_options(cfg.CONF)
     config.parse_args(argv)
-    # config.set_config_defaults()
+    config.set_config_defaults()
 
-    logging.setup(cfg.CONF, 'oasis')
+    logging.setup(cfg.CONF, 'oasis-agent')
