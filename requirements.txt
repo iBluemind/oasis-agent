@@ -24,3 +24,4 @@ greenlet>=0.3.2 # MIT
 jsonpatch>=1.1 # BSD
 pecan>=1.0.0 # BSD
 vine==1.1.3
+kombu==3.0.35
