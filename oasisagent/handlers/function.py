@@ -9,7 +9,6 @@ class Handler(object):
         self.erro = ''
         self.builder = script_builder.ScriptFileBuilder()
 
-    @staticmethod
     def run_service(self, function_id, body, rule):
         self.builder.set_route(rule)
         self.builder.set_function(function_id, body)
