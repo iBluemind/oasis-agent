@@ -11,8 +11,10 @@ class ScriptFileBuilder:
         self.route = ''
         self.function_body = ''
 
-    def set_route(self, rule):
-        self.route += "@app.route('%s')" % rule
+    def set_route(self, rule, method):
+        self.route += "@app.route('%s', methods=[" % rule
+        self.route += ", ".join(['\'%s\'' % str(m) for m in method])
+        self.route += "])"
 
     def set_function(self, func_id, body):
         self.function_id = func_id
