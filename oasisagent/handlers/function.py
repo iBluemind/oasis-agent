@@ -5,8 +5,8 @@ import uuid
 
 class Handler(object):
     def __init__(self):
-        self.process = ''
-        self.erro = ''
+        self.process = None
+        self.erro = None
         self.builder = script_builder.ScriptFileBuilder()
 
     def run_service(self, function_id, body, rule, method):
@@ -22,10 +22,10 @@ class Handler(object):
         if self.erro == '':
             return "OK"
 
-    def function_update(self, context, function_id, body, rule):
+    def function_update(self, context, function_id, body, rule, methods):
         self.process.kill()
 
-        self.run_service(function_id, body, rule)
+        self.run_service(function_id, body, rule, methods)
 
         if self.erro == '':
             return "OK"
