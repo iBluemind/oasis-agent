@@ -39,8 +39,14 @@ class ScriptFileBuilder:
 
 class ScriptFile:
     def __init__(self):
-        self.prototype = "from flask import Flask\n" \
-                          "app = Flask(__name__)\n"
+        self.prototype = """
+        from flask import Flask
+        app = Flask(__name__)
+
+        @app.route('/')
+        def iam_alive():
+            return 'Powerful Function as a Service for OpenStack Oasis'
+        """.strip()
         self.route = ''
         self.function = ''
         self.host = '0.0.0.0'
