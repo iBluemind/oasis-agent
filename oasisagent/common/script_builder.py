@@ -46,7 +46,7 @@ class ScriptFile:
         @app.route('/')
         def iam_alive():
             return 'Powerful Function as a Service for OpenStack Oasis'
-        """.strip()
+        """.lstrip()
         self.route = ''
         self.function = ''
         self.host = '0.0.0.0'
