@@ -43,7 +43,7 @@ class ScriptFile:
             "app = Flask(__name__)\n" + \
             "@app.route('/')\n" + \
             "def iam_alive():\n" + \
-            "return 'Powerful Function as a Service for OpenStack Oasis'\n"
+            "   return 'Powerful Function as a Service for OpenStack Oasis'\n"
         self.route = ''
         self.function = ''
         self.host = '0.0.0.0'
