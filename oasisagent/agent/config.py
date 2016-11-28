@@ -27,7 +27,7 @@ AGENT_SERVICE_OPTS = [
                      'used for bay locking.')),
     cfg.StrOpt('function_location',
                help='Function file location',
-               default='/etc/oasis-agent/functions')
+               default='/etc/oasis-agent/functions/oasis/bin')
 ]
 
 opt_group = cfg.OptGroup(
