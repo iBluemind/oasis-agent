@@ -109,4 +109,4 @@ fi
 
 # mkdir function directory
 mkdir -p /etc/oasis-agent/functions
-virtualenv venv_oasis
+virtualenv /opt/venv_oasis
